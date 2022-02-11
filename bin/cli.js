@@ -2,6 +2,9 @@
 
 const meow = require('meow')
 const self = require('../package.json')
+const { resolveCommits, getCommitDate, changeDate } = require('../src/git')
+const { format: formatDate, forward, backward } = require('../src/dates')
+const parseDuration = require('parse-duration')
 
 const cli = meow(`
 Updates GIT_AUTHOR_DATE and GIT_COMMITTER_DATE in matching commits.
@@ -41,10 +44,17 @@ ${self.homepage}
       type: 'boolean',
       default: false,
     },
+    verbose: {
+      type: 'boolean',
+      default: false,
+    },
   },
 })
 
 const commitOrRange = cli.input[0]
+const cwd = process.cwd()
+const dryRun = cli.flags.dryRun
+const verbose = cli.flags.verbose
 
 ;(async () => {
   if (!commitOrRange) {
@@ -58,9 +68,47 @@ const commitOrRange = cli.input[0]
     cli.showHelp(1)
   }
 
-  console.log('\nMAGIC HAS HAPPENED 🤩✨ 🧙‍♂️')
+  // Attempt to resolve input to one or more commits; this also works as validation
+  const matchingCommits = await resolveCommits(cwd, commitOrRange)
+
+  // Validate the target date before iterating commits.
+  if (cli.flags.absolute) {
+    try {
+      formatDate(cli.flags.absolute)
+    } catch (_err) {
+      console.error('\n❌ Unsupported isoDate provided.\n❌ See https://en.wikipedia.org/wiki/ISO_8601')
+      cli.showHelp(1)
+    }
+  }
+  if (cli.flags.relative || cli.flags.relativeReverse) {
+    const duration = parseDuration(cli.flags.relative || cli.flags.relativeReverse)
+    if (!duration) {
+      console.error('\n❌ Unsupported duration provided.\n❌ See https://github.com/jkroso/parse-duration#readme')
+      cli.showHelp(1)
+    }
+  }
+
+  // Iterate commits and update their dates
+  for (const hash of matchingCommits) {
+    const currentDate = await getCommitDate(cwd, hash)
+    if (verbose) console.log(`\n${hash} 📅 Currently: ${currentDate}`)
+
+    const newDate = cli.flags.absolute
+      ? formatDate(cli.flags.absolute)
+      : cli.flags.relative
+        ? forward(currentDate, cli.flags.relative)
+        : backward(currentDate, cli.flags.relativeReverse)
+
+    if (dryRun || verbose) console.log(`${hash} 🔃 Setting to ${newDate}`)
+    if (!dryRun) {
+      await changeDate(cwd, hash, newDate)
+      if (verbose) console.log(`${hash} ✅ Updated`)
+    }
+  }
+
+  console.log('\nMAGIC HAS HAPPENED 🤩✨')
 })().catch(err => {
   console.error(err)
-  // console.error(`\nThis may have been an error with ${Object.keys(self.bin)[0]} itself,\nbut here are the instructions just in case:`)
-  // cli.showHelp(1)
+  console.error(`\nThis may have been an error with ${Object.keys(self.bin)[0]} itself,\nbut here are the instructions just in case:`)
+  cli.showHelp(1)
 })
