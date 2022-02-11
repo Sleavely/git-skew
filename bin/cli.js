@@ -34,15 +34,12 @@ ${self.homepage}
   flags: {
     absolute: {
       type: 'string',
-      isRequired: (flags) => !flags.relative && !flags.relativeReverse,
     },
     relative: {
       type: 'string',
-      isRequired: (flags) => !flags.absolute && !flags.relativeReverse,
     },
     relativeReverse: {
       type: 'string',
-      isRequired: (flags) => !flags.absolute && !flags.relative,
     },
     dryRun: {
       type: 'boolean',
@@ -67,8 +64,11 @@ const verbose = cli.flags.verbose
   }
 
   // Only one of the time options are allowed at a time.
-  if (Object.keys(cli.flags).filter((flag) => ['absolute', 'relative', 'relativeReverse'].includes(flag)).length > 1) {
-    console.error('\n❌ Only one of --absolute, --relative, --relative-reverse should be specified')
+  if (
+    Object.keys(cli.flags).filter((flag) => ['absolute', 'relative', 'relativeReverse'].includes(flag)).length !== 1 ||
+    ['absolute', 'relative', 'relativeReverse'].every((flag) => !cli.flags[flag])
+  ) {
+    console.error('\n❌ One (only) of --absolute, --relative, --relative-reverse must be specified')
     cli.showHelp(1)
   }
 
@@ -101,7 +101,9 @@ const verbose = cli.flags.verbose
       ? formatDate(cli.flags.absolute)
       : cli.flags.relative
         ? forward(currentDate, cli.flags.relative)
-        : backward(currentDate, cli.flags.relativeReverse)
+        : cli.flags.relative
+          ? backward(currentDate, cli.flags.relativeReverse)
+          : currentDate
 
     if (dryRun || verbose) console.log(`${hash} 🔃 Setting to ${newDate}`)
     if (!dryRun) {
