@@ -100,10 +100,13 @@ const verbose = cli.flags.verbose
         : backward(currentDate, cli.flags.relativeReverse)
 
     if (dryRun || verbose) console.log(`${hash} 🔃 Setting to ${newDate}`)
-    if (!dryRun) await changeDate(cwd, hash, newDate)
+    if (!dryRun) {
+      await changeDate(cwd, hash, newDate)
+      if (verbose) console.log(`${hash} ✅ Updated`)
+    }
   }
 
-  console.log('\nMAGIC HAS HAPPENED 🤩✨ 🧙‍♂️')
+  console.log('\nMAGIC HAS HAPPENED 🤩✨')
 })().catch(err => {
   console.error(err)
   // console.error(`\nThis may have been an error with ${Object.keys(self.bin)[0]} itself,\nbut here are the instructions just in case:`)
