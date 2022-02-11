@@ -24,3 +24,9 @@ Options
   --help
       Displays this message.
 ```
+
+## Installation
+
+```sh
+npm install -g git-skew
+```
