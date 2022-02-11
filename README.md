@@ -1,13 +1,19 @@
 # git-skew
 
-A tool for manipulating Git history by changing one or more commits' dates either relative to itself or to a fixed point in time.
+A tool for manipulating Git history by changing one or more commits' `GIT_AUTHOR_DATE` and `GIT_COMMITTER_DATE` either relative to itself or to a fixed point in time.
 
 🕔⇆🕤
+
+## Installation
+
+```sh
+npm install -g git-skew
+```
 
 ## Usage
 
 ```
-git-skew <sha1> [--absolute <isoDate> | --relative[-reverse] <duration>] [--verbose] [--dry-run]
+git-skew <commitOrRange> [--absolute <isoDate> | --relative[-reverse] <duration>] [--verbose] [--dry-run]
 
 Options
   --absolute <isoDate>
@@ -25,8 +31,31 @@ Options
       Displays this message.
 ```
 
-## Installation
+The `commitOrRange` argument follows the [semantics of Git Revision Selection](https://git-scm.com/book/en/v2/Git-Tools-Revision-Selection), but must be quoted if it contains any spaces.
 
-```sh
-npm install -g git-skew
+
+> ❗ We strongly advice that you always try your git-skew commands with the `--dry-run` flag to avoid accidentally changing the history of your entire repository.
+
+### Single commit by hash
+
+If you know the SHA1 of the commit - or at least the short version - and want to change its datetime to a known point in time.
+
+```
+git-skew 70bd49b --absolute 2025-01-01T12:00:00Z
+```
+
+### The latest commit
+
+This will update a range of commits to have been committed 1 hour later. It targets everything _after_ `HEAD~1` up to, and _including_, `HEAD`.
+
+```
+git-skew HEAD~1..HEAD --relative 1h
+```
+
+### Commits made after a certain time
+
+Targets the main branch, starting with commits made after 6pm.
+
+```
+git-skew 'main@{"Today 6pm"}..HEAD' --relative 1h
 ```

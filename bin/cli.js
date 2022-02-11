@@ -10,7 +10,7 @@ const cli = meow(`
 Updates GIT_AUTHOR_DATE and GIT_COMMITTER_DATE in matching commits.
 
 Usage
-  $ ${Object.keys(self.bin)[0]} <sha1> [--absolute <isoDate> | --relative[-reverse] <duration>] [--verbose] [--dry-run]
+  $ ${Object.keys(self.bin)[0]} <commitOrRange> [--absolute <isoDate> | --relative[-reverse] <duration>] [--verbose] [--dry-run]
 
 Options
   --absolute <isoDate>
