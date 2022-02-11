@@ -26,5 +26,5 @@ exports.changeDate = async (path, commitHash, date) => {
          export GIT_AUTHOR_DATE="${isoDate}"
          export GIT_COMMITTER_DATE="${isoDate}"
      fi' \\
-     --tag-name-filter cat -- --all`)
+     --tag-name-filter cat -- --all && git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d`)
 }
