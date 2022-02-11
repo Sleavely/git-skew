@@ -109,6 +109,6 @@ const verbose = cli.flags.verbose
   console.log('\nMAGIC HAS HAPPENED 🤩✨')
 })().catch(err => {
   console.error(err)
-  // console.error(`\nThis may have been an error with ${Object.keys(self.bin)[0]} itself,\nbut here are the instructions just in case:`)
-  // cli.showHelp(1)
+  console.error(`\nThis may have been an error with ${Object.keys(self.bin)[0]} itself,\nbut here are the instructions just in case:`)
+  cli.showHelp(1)
 })
