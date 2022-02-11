@@ -20,10 +20,11 @@ exports.getCommitDate = async (path, commitHash) => {
 exports.changeDate = async (path, commitHash, date) => {
   const isoDate = dates.format(date)
 
-  return await execute(`cd "${path}" && git filter-branch -f --env-filter \
+  return await execute(`cd "${path}" && git filter-branch --force --env-filter \
     'if [ "$GIT_COMMIT" = "${commitHash}" ]
      then
          export GIT_AUTHOR_DATE="${isoDate}"
          export GIT_COMMITTER_DATE="${isoDate}"
-     fi'`)
+     fi' \\
+     --tag-name-filter cat -- --all`)
 }
