@@ -10,7 +10,7 @@ const cli = meow(`
 Updates GIT_AUTHOR_DATE and GIT_COMMITTER_DATE in matching commits.
 
 Usage
-  $ ${Object.keys(self.bin)[0]} <sha1> [--absolute <isoDate> | --relative[-reverse] <duration>]
+  $ ${Object.keys(self.bin)[0]} <sha1> [--absolute <isoDate> | --relative[-reverse] <duration>] [--verbose] [--dry-run]
 
 Options
   --absolute <isoDate>
@@ -19,7 +19,11 @@ Options
       Moves commits forward in time relative to the original commit date.
       Example: --relative 1d2h
   --relative-reverse <duration>
-      Like --relative but moves backwards in time
+      Like --relative but moves backwards in time.
+  --verbose
+    Prints helpful information on what is happening.
+  --dry-run
+    Prints the things that would happen but does not modify the Git repository.
   --help
       Displays this message.
 
