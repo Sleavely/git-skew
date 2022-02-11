@@ -1,6 +1,8 @@
 # git-skew
 
-A tool for manipulating history. Like rebase but without the insanity.
+A tool for manipulating history.
+
+🕔⇆🕤
 
 ```sh
 git-skew <sha1> [--absolute <isoDate> | --relative[-reverse] <duration>]
