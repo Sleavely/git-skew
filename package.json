@@ -6,6 +6,9 @@
   "bin": {
     "git-skew": "./bin/cli.js"
   },
+  "engines": {
+    "node": ">= 12.19.0 < 13 || >= 14.10.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
