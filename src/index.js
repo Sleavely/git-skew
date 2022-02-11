@@ -1,5 +1,4 @@
 
 exports.dates = require('./dates')
-exports.execute = require('./git')
-exports.fs = require('./fs')
+exports.execute = require('./execute')
 exports.git = require('./git')
