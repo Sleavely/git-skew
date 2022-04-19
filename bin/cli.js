@@ -101,7 +101,7 @@ const verbose = cli.flags.verbose
       ? formatDate(cli.flags.absolute)
       : cli.flags.relative
         ? forward(currentDate, cli.flags.relative)
-        : cli.flags.relative
+        : cli.flags.relativeReverse
           ? backward(currentDate, cli.flags.relativeReverse)
           : currentDate
 
