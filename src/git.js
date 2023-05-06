@@ -5,6 +5,7 @@ const dates = require('./dates')
 exports.resolveCommits = async (path, commitOrRange) => {
   const stdout = await execute(`cd "${path}" && git log --format=%H ${commitOrRange}`)
   const commits = stdout.split('\n').filter(Boolean)
+  if (!commits.length) return []
 
   // Check if the first commit is an exact or full version of the query
   if (commits[0].startsWith(commitOrRange)) return [commits[0]]
